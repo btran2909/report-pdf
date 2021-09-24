@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { PdfgeneratorService } from './pdfmake-files/pdfgenerator.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser/'
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,21 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'ng-demo-app';
+  pdfUrl?: SafeResourceUrl;
+
+  constructor(
+    private pdfService:PdfgeneratorService,
+    private sanitizer:DomSanitizer
+  ){
+    this.generatePdfUrl();
+  }
+
+  generatePdfUrl(){
+    this.pdfService.generatePdfUrl({},{},performance.now()).subscribe(
+      data => {
+        if(data)
+          this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data);
+      }
+    )
+  }
 }
